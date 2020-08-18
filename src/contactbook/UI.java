@@ -508,17 +508,18 @@ public class UI extends javax.swing.JFrame {
         if (editing==false) {
             //write code here to display row in the form for editing.
             
-            int rowCount = contactListTable.getSelectedRow(); //getting RowCount and saving it in int variable rowCount
+            int rowCount = contactListTable.getSelectedRow()+1; //getting RowCount and saving it in int variable rowCount (+1 is used to increment result)
 //            int selectedColumn = contactListTable.getSelectedColumn();//not needed now
             System.out.println(rowCount);
 //            System.out.println(selectedColumn); //not needed now
-                firstName.setText(tModel.getValueAt(rowCount,0).toString());
-                middleName.setText(tModel.getValueAt(rowCount,1).toString());
-                lastName.setText(tModel.getValueAt(rowCount,2).toString());
-                contact.setText(tModel.getValueAt(rowCount,3).toString());
-                homeLine.setText(tModel.getValueAt(rowCount,4).toString());
-                email.setText(tModel.getValueAt(rowCount,5).toString());
-                address.setText(tModel.getValueAt(rowCount,6).toString());
+                //count starts from 0; id is not needed here that's why it is not called here.
+                firstName.setText(tModel.getValueAt(rowCount,1).toString());
+                middleName.setText(tModel.getValueAt(rowCount,2).toString());
+                lastName.setText(tModel.getValueAt(rowCount,3).toString());
+                contact.setText(tModel.getValueAt(rowCount,4).toString());
+                homeLine.setText(tModel.getValueAt(rowCount,5).toString());
+                email.setText(tModel.getValueAt(rowCount,6).toString());
+                address.setText(tModel.getValueAt(rowCount,7).toString());
 //                tModel.setValueAt(data, rowCount, 0); //use this to set the emergency contact id in its column
 
             JOptionPane.showMessageDialog(null, " row # "+rowCount+" selected.");
