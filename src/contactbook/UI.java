@@ -45,6 +45,7 @@ public class UI extends javax.swing.JFrame {
         jFileChooser1 = new javax.swing.JFileChooser();
         jFileChooser2 = new javax.swing.JFileChooser();
         jFileChooser3 = new javax.swing.JFileChooser();
+        emptyBorder1 = (javax.swing.border.EmptyBorder)javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1);
         jLabel1 = new javax.swing.JLabel();
         c_id = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -138,7 +139,6 @@ public class UI extends javax.swing.JFrame {
         ));
         contactListTable.setToolTipText("");
         contactListTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        contactListTable.setRowSelectionAllowed(true);
         contactListTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 contactListTableMouseClicked(evt);
@@ -387,13 +387,34 @@ public class UI extends javax.swing.JFrame {
                    
                 }else{    
                     JOptionPane.showMessageDialog(this, "Please Enter All Fields!");
-//                    flag = true;
                 }
             
             }else{
-                JOptionPane.showMessageDialog(rootPane, "Set to Update Record");
+                //code to udate record in database from the form
+                
+                String updateQuery = "UPDATE contact_book.contact_info set "
+                        + "first_name = ?, "
+                        + "middle_name = ?, "
+                        + "last_name = ?,"
+                        + "contact = ?, "
+                        + "home_line = ?, "
+                        + "email = ?, "
+                        + "address = ?"
+                        + "where c_id = ?";
+                PreparedStatement updateStatement = dbHandler.getCon().prepareStatement(updateQuery);
+                updateStatement.setString(1, firstName.getText());
+                updateStatement.setString(2, middleName.getText());
+                updateStatement.setString(3, lastName.getText());
+                updateStatement.setString(4, contact.getText());
+                updateStatement.setString(5, homeLine.getText());
+                updateStatement.setString(6, email.getText());
+                updateStatement.setString(7, address.getText());
+                updateStatement.setString(8, c_id.getText());
+                
+                int executeUpdateCount = updateStatement.executeUpdate();
+                
+                JOptionPane.showMessageDialog(rootPane, +executeUpdateCount+" Updated successflly");
                 System.out.println("Set to Update Records");
-                flag = true;
             }
         } catch (SQLException ex) {
             Logger.getLogger(UI.class.getName()).log(Level.SEVERE, null, ex);
@@ -403,7 +424,7 @@ public class UI extends javax.swing.JFrame {
     private void newContactBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newContactBtnActionPerformed
         clearFields();
         
-        flag = false;
+        flag = true;
     }//GEN-LAST:event_newContactBtnActionPerformed
 
     public void clearFields(){
@@ -483,6 +504,7 @@ public class UI extends javax.swing.JFrame {
 //                while (myRst.next()) {
 //                    myRst2.getString(4);
 //                }
+
                 
             }
             
@@ -503,6 +525,7 @@ public class UI extends javax.swing.JFrame {
     }//GEN-LAST:event_addEmgContActionPerformed
 
     private void contactListTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_contactListTableMouseClicked
+        flag = false;
         boolean editing = contactListTable.isEditing();
         
         if (editing==false) {
@@ -569,6 +592,7 @@ public class UI extends javax.swing.JFrame {
     private javax.swing.JTextField contact;
     private javax.swing.JTable contactListTable;
     private javax.swing.JTextField email;
+    private javax.swing.border.EmptyBorder emptyBorder1;
     private javax.swing.JButton findBtn;
     private javax.swing.JTextField firstName;
     private javax.swing.JTextField homeLine;
