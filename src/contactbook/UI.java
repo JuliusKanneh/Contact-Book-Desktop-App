@@ -1,12 +1,17 @@
 package contactbook;
 
+import java.awt.Image;
+import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -27,6 +32,9 @@ public class UI extends javax.swing.JFrame {
     Statement stmt;
     ResultSet myRst;
     String[] data;
+    public int c_id;
+    
+    String imagePath = null;
     
     /**
      * Creates new form UI
@@ -66,7 +74,7 @@ public class UI extends javax.swing.JFrame {
         address = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        photo = new javax.swing.JLabel();
+        label_image = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         middleName = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
@@ -74,7 +82,7 @@ public class UI extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
         addEmgCont = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btn_choose = new javax.swing.JButton();
         btn_next = new javax.swing.JButton();
         btn_previous = new javax.swing.JButton();
         btn_delete = new javax.swing.JButton();
@@ -138,6 +146,17 @@ public class UI extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(contactListTable);
+        if (contactListTable.getColumnModel().getColumnCount() > 0) {
+            contactListTable.getColumnModel().getColumn(0).setHeaderValue("ID");
+            contactListTable.getColumnModel().getColumn(1).setHeaderValue("FIRST NAME");
+            contactListTable.getColumnModel().getColumn(2).setHeaderValue("MIDDLE NAME");
+            contactListTable.getColumnModel().getColumn(3).setHeaderValue("LAST NAME");
+            contactListTable.getColumnModel().getColumn(4).setHeaderValue("CONTACT");
+            contactListTable.getColumnModel().getColumn(5).setHeaderValue("HOME LINE");
+            contactListTable.getColumnModel().getColumn(6).setHeaderValue("EMAIL");
+            contactListTable.getColumnModel().getColumn(7).setHeaderValue("ADRESS");
+            contactListTable.getColumnModel().getColumn(8).setHeaderValue("Emergency Contact");
+        }
 
         firstName.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         firstName.addActionListener(new java.awt.event.ActionListener() {
@@ -171,9 +190,9 @@ public class UI extends javax.swing.JFrame {
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel8.setText("CONTACT LISTS");
 
-        photo.setBackground(new java.awt.Color(0, 255, 255));
-        photo.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-        photo.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        label_image.setBackground(new java.awt.Color(0, 255, 255));
+        label_image.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        label_image.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel9.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jLabel9.setText("Middle Name");
@@ -214,7 +233,12 @@ public class UI extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Chose Image");
+        btn_choose.setText("Chose Image");
+        btn_choose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_chooseActionPerformed(evt);
+            }
+        });
 
         btn_next.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/Forward Button_24px.png"))); // NOI18N
         btn_next.setText("Next");
@@ -289,8 +313,8 @@ public class UI extends javax.swing.JFrame {
                                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(10, 10, 10)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
-                                    .addComponent(photo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(btn_choose, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
+                                    .addComponent(label_image, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(0, 26, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(newContactBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -328,9 +352,9 @@ public class UI extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(photo, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(label_image, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2))
+                        .addComponent(btn_choose))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
@@ -349,7 +373,7 @@ public class UI extends javax.swing.JFrame {
                     .addComponent(newContactBtn)
                     .addComponent(saveBtn)
                     .addComponent(allContacts))
-                .addGap(39, 39, 39)
+                .addGap(45, 45, 45)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jLabel8))
@@ -423,8 +447,8 @@ public class UI extends javax.swing.JFrame {
                         + "contact = ?, "
                         + "home_line = ?, "
                         + "email = ?, "
-                        + "address = ? "
-                        + "where c_id = ?";
+                        + "address = ? " 
+                        + "where c_id = ?"; //error from here
                 
                     PreparedStatement updateStatement = dbHandler.getCon().prepareStatement(updateQuery);
                     updateStatement.setString(1, firstName.getText());
@@ -434,7 +458,7 @@ public class UI extends javax.swing.JFrame {
                     updateStatement.setString(5, homeLine.getText());
                     updateStatement.setString(6, email.getText());
                     updateStatement.setString(7, address.getText());
-//                    updateStatement.setInt(8, Integer.parseInt(String.valueOf(c_id.getText())));
+                    updateStatement.setInt(8, c_id);
                 
                     updateStatement.executeUpdate();
                     System.out.println("Working");
@@ -481,8 +505,9 @@ public class UI extends javax.swing.JFrame {
     }//GEN-LAST:event_allContactsActionPerformed
 
     public void viewAllRecord(){
+        
         try {
-            String rstQuery1 = "select * from contact_book.contact_info";
+            String rstQuery1 = "select c_id, first_name, middle_name, contact from contact_book.contact_info";
             stmt = dbHandler.getCon().createStatement();
             myRst = stmt.executeQuery(rstQuery1);
                         
@@ -491,13 +516,14 @@ public class UI extends javax.swing.JFrame {
                     String.valueOf(myRst.getInt(1)),
                     myRst.getString(2), 
                     myRst.getString(3),
-                    myRst.getString(4),
-                    myRst.getString(5),
-                    myRst.getString(6),
-                    myRst.getString(7),
-                    myRst.getString(8)
+                    myRst.getString(4)
+//                    myRst.getString(5),
+//                    myRst.getString(6),
+//                    myRst.getString(7),
+//                    myRst.getString(8)
                 };
                 
+                c_id = myRst.getInt(1);
                
                 System.out.println(data[0] + " " + data[1]);
                 
@@ -545,6 +571,10 @@ public class UI extends javax.swing.JFrame {
             System.out.println(rowCount);
 //            System.out.println(selectedColumn); //not needed now
                 //count starts from 0; id is not needed here that's why it is not called here.
+                c_id = Integer.parseInt(String.valueOf(tModel.getValueAt(rowCount, 0))); //setting contact id to c_id variable.
+                
+                //call query method here to get records from contact_info table
+                
                 firstName.setText(tModel.getValueAt(rowCount,1).toString());
                 middleName.setText(tModel.getValueAt(rowCount,2).toString());
                 lastName.setText(tModel.getValueAt(rowCount,3).toString());
@@ -552,6 +582,7 @@ public class UI extends javax.swing.JFrame {
                 homeLine.setText(tModel.getValueAt(rowCount,5).toString());
                 email.setText(tModel.getValueAt(rowCount,6).toString());
                 address.setText(tModel.getValueAt(rowCount,7).toString());
+                
 //                tModel.setValueAt(data, rowCount, 0); //use this to set the emergency contact id in its column
 
             JOptionPane.showMessageDialog(null, " row # "+rowCount1+" selected.");
@@ -562,6 +593,45 @@ public class UI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_emailActionPerformed
 
+    private void btn_chooseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_chooseActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        
+        FileNameExtensionFilter fileNmeExtention = new FileNameExtensionFilter("*.images", ".jpeg", ".png");
+        fileChooser.addChoosableFileFilter(fileNmeExtention);
+        int result = fileChooser.showSaveDialog(null);
+        
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selecedFile = fileChooser.getSelectedFile();
+            String path = selecedFile.getAbsolutePath();
+            label_image.setIcon(resizeImange(path, null));
+        }
+        else{
+            JOptionPane.showMessageDialog(rootPane, "image must be jpg or png format");
+        }
+    }//GEN-LAST:event_btn_chooseActionPerformed
+
+    //query all record from the contact_info table
+    
+    
+    //Resize image to the size of jTextLabel to hold the images
+    
+    public ImageIcon resizeImange(String imagePath, byte[] pic){
+        ImageIcon myImage = null;
+        
+        if(myImage != null){
+            myImage = new ImageIcon(imagePath);
+        }else{
+            myImage = new ImageIcon(pic);
+        }
+        
+        Image img = myImage.getImage();
+        Image img2 = img.getScaledInstance(label_image.getWidth(), label_image.getHeight(), Image.SCALE_SMOOTH);
+        
+        ImageIcon image = new ImageIcon(img2);
+        return image;
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -601,6 +671,7 @@ public class UI extends javax.swing.JFrame {
     private javax.swing.JButton addEmgCont;
     private javax.swing.JTextField address;
     private javax.swing.JButton allContacts;
+    private javax.swing.JButton btn_choose;
     private javax.swing.JButton btn_delete;
     private javax.swing.JButton btn_next;
     private javax.swing.JButton btn_previous;
@@ -611,7 +682,6 @@ public class UI extends javax.swing.JFrame {
     private javax.swing.JTextField firstName;
     private javax.swing.JTextField homeLine;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JFileChooser jFileChooser2;
     private javax.swing.JFileChooser jFileChooser3;
@@ -626,10 +696,10 @@ public class UI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel label_image;
     private javax.swing.JTextField lastName;
     private javax.swing.JTextField middleName;
     private javax.swing.JButton newContactBtn;
-    private javax.swing.JLabel photo;
     private javax.swing.JButton saveBtn;
     // End of variables declaration//GEN-END:variables
 }
